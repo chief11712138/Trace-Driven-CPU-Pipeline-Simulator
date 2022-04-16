@@ -9,32 +9,35 @@
 #define instructions_hpp
 
 #include "necessaryHeader.hpp"
-#include "record.hpp"
 
 class instructions {
 private:
     string PC; // Instruction program counter (PC)
     int type; // Instruction type
     string* depends; // A list of PC values for instructions that the current instruction depends on
+    int dependsLength; // Depends array length
     instructions* next; // A list of
     
     instructions(); // Default constructor
-    ~instructions(); // Deconstructor
-    
-    void readFile(string tempS); // Read input trace into program
-    
-    void reload(); // Reload instructions from the file. Each time reload 10 instructions
-    
+
     // Help functions
+    void __reloadH(string s); // This is a help function of reload. It will put s into current instructions
     
 public:
+    ~instructions(); // Deconstructor
+    
     instructions(string s); // Constructor
+    instructions(string PC, int type, string depends[], int dependsLength); // Constructor
     
-    void pop(); // Pop instructions
+    void pop(instructions* INS); // Pop instructions
     
-    void push(); // Push instructions
+    void push(instructions INS); // Push instructions
     
     instructions top(); // Return top instuctions
+    
+    void reload(); // Reload instructions from the file. Each time reload 30 instructions. Assume never reach the end of the file
+    
+    int length(); // Return the length of current instructions queue
 };
 
 #endif /* instructions_hpp */
