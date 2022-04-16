@@ -16,7 +16,7 @@ private:
     int type; // Instruction type
     string* depends; // A list of PC values for instructions that the current instruction depends on
     int dependsLength; // Depends array length
-    instructions* next; // A list of
+    instructions* next; // Next instructions
     
     instructions(); // Default constructor
 
@@ -38,6 +38,15 @@ public:
     void reload(); // Reload instructions from the file. Each time reload 30 instructions. Assume never reach the end of the file
     
     int length(); // Return the length of current instructions queue
+    
+    // Help functions
+    string* getDepends(); // Get the top instruction depends
+    
+    int getDependsLength(); // Get the top instruction depends length
+    
+    int getType(); // Get the top instruction type
+    
+    string getPC(); // Get the top instruction PC
 };
 
 #endif /* instructions_hpp */

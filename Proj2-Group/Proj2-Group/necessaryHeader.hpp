@@ -22,7 +22,7 @@ extern bool floatOccupied; // This variable represent: is floating point unit oc
 
 extern bool branchExeOccupied; // This variable represent: is branch execution unit occupied
 
-extern bool readOcuupied; // This variable represent: is read port occupied
+extern bool readOccupied; // This variable represent: is read port occupied
 
 extern bool writeOccupied; // This varible represent: is write port occupied
 
@@ -36,8 +36,16 @@ extern int W; // This variable represent the width of the pipeline
 
 extern string location; // Used to store file location (need to be the full location to make sure program can find it)
 
-extern map<string, int> root; // Used to store all the instructions have been finished
+extern map<string, int> root; // Used to store all the instructions have been finished. string represent PC. int represent number of finished instructions
 
 // Performance Metrics
+extern int T; // In cycle
+
+extern double IT[5]; // Store each instructions type percentage
+
+// Help Variables
+extern bool isEXE; // Used to dertemin EX stage if instruction has been executed
+
+extern bool isMEM; // Used to determin MEM stage if instruction finish memory access
 
 #endif /* necessaryHeader_hpp */

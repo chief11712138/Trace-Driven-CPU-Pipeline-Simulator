@@ -171,3 +171,24 @@ int instructions::length() {
     
     return result;
 }
+
+// Help functions
+// Get the top instruction depends
+string* instructions::getDepends() {
+    return this->depends;
+}
+
+// Get the top instruction depends length
+int instructions::getDependsLength() {
+    return this->dependsLength;
+}
+
+// Get the top instruction type
+int instructions::getType() {
+    return this->type;
+}
+
+// Get the top instruction PC
+string instructions::getPC() {
+    return this->PC;
+}
