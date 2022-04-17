@@ -15,6 +15,7 @@
   * X represent version that whole project can run successfully
   * Y represent that any changes in functions of the project
   * Z represent that any small changes in the project
+* **Current Version: 0.4.0**
 
 ## Error Table
 
