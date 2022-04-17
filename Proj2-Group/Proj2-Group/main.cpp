@@ -90,6 +90,8 @@ int main(int argc, char* argv[]) {
         T++;
     }
     
+    PPL.~pipeline();
+    
     caculateIT();
     
     cout <<T <<endl;
