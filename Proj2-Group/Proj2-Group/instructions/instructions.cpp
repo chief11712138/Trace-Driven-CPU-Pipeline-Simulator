@@ -8,15 +8,6 @@
 #include "instructions.hpp"
 
 // Private:
-// Default constructor
-instructions::instructions() {
-    PC = "Error";
-    type = -1;
-    depends = nullptr;
-    dependsLength = -1;
-    next = nullptr;
-}
-
 // Help functions
 // This is a help function of reload. It will put s into current instructions
 void instructions::__reloadH(string s) {
@@ -28,16 +19,16 @@ void instructions::__reloadH(string s) {
     
     this->PC = s.substr(start, end);
     
-    start += (end - start + 1);
+    start = (end + 1);
     end = (int)s.find(',', start);
     
     this->type = stoi(s.substr(start, end-start));
     
     int tempStart = start;
     int tempEnd = end;
-    
+
     while(s.find(',', tempStart) != -1) {
-        tempStart += (tempEnd + 1);
+        tempStart = (tempEnd + 1);
         tempEnd = (int)s.find(',', tempStart);
         this->dependsLength++;
     }
@@ -45,8 +36,10 @@ void instructions::__reloadH(string s) {
     this->depends = new string[this->dependsLength];
 
     while (s.find(',', start) != -1) {
-        start += (end - start + 1);
+        start = (end + 1);
         end = (int)s.find(',', start);
+        if(end == -1)
+            end = (int)s.length();
 
         this->depends[i] = s.substr(start, end-start);
         i++;
@@ -54,27 +47,34 @@ void instructions::__reloadH(string s) {
 }
 
 // Public:
+// Default constructor
+instructions::instructions() {
+    PC = "Error";
+    type = -1;
+    depends = nullptr;
+    dependsLength = -1;
+    next = nullptr;
+}
+
 // Deconstructor
 instructions::~instructions() {
-    if(this->next == nullptr) {
-        delete depends;
+    if(!this)
+        return;
+    if(!this->next) {
+        if(!this->depends)
+            delete[] depends;
         return;
     }
     
     instructions* temp = this->next;
-    delete this->depends;
+    if(!this->depends)
+        delete[] this->depends;
     delete this;
     temp->~instructions();
 }
 
 // Constructor
-instructions::instructions(string s) {
-    s = location;
-    this->reload();
-}
-
-// Constructor
-instructions::instructions(string PC, int type, string depends[], int dependsLength) {
+instructions::instructions(string PC, int type, string* depends, int dependsLength) {
     this->PC = PC;
     this->type = type;
     this->depends = new string[dependsLength];
@@ -84,18 +84,19 @@ instructions::instructions(string PC, int type, string depends[], int dependsLen
 
 // Pop instructions
 void instructions::pop(instructions* INS) {
-    if(INS == nullptr) {
+    if(!INS) {
         cout <<"Error! Cannot pop empty instructions queue" <<endl;
         exit(10);
     }
     
-    if(INS->next == nullptr) {
+    if(!INS->next) {
         this->~instructions();
         return;
     }
     
     instructions* temp = INS->next;
-    delete INS->depends;
+    if(!INS->depends)
+        delete[] INS->depends;
     delete INS;
     INS = temp;
 }
@@ -125,10 +126,12 @@ void instructions::push(instructions INS) {
 
 // Return top instructions
 instructions instructions::top() {
-    string s[this->dependsLength];
+    string* s = new string[this->dependsLength];
     for(int i=0; i<this->dependsLength; i++) s[i] = this->depends[i];
     
     instructions result(this->PC, this->type, s, this->dependsLength);
+    
+    delete[] s;
     
     return result;
 }
@@ -147,7 +150,7 @@ void instructions::reload() {
     while(temp->next) temp = temp->next;
     
     while(getline(fin, s) && i<30) {
-        temp->next = new instructions;
+        temp->next = new instructions();
         temp->next->__reloadH(s);
         temp = temp->next;
         i++;
@@ -156,9 +159,9 @@ void instructions::reload() {
 
 // Return the length of current instructions queue
 int instructions::length() {
-    if(!this)
+    if(!this || (!this->next && this->type == -1))
         return 0;
-    if(!this->next)
+    if(!this->next && this->type != -1)
         return 1;
     
     int result = 1;
@@ -191,4 +194,12 @@ int instructions::getType() {
 // Get the top instruction PC
 string instructions::getPC() {
     return this->PC;
+}
+
+// Set the top instruction
+void instructions::setInstructions(string PC, int type, string *s, int dependensLength) {
+    this->PC = PC;
+    this->type = type;
+    this->depends = s;
+    this->dependsLength = dependensLength;
 }
