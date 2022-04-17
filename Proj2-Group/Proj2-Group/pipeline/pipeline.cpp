@@ -21,30 +21,59 @@ void pipeline::initialize() {
     isMEM = false;
     
     string s;
-    for(int i=0; i<inst_count; i++) getline(fin, s);
+    for(int i=0; i<start_inst; i++) getline(fin, s);
 }
 
 // Simulate IF stage
 void pipeline::S_IF() {
+    
     // Not reach the pipeline width
     // Then check if in queue
-    if(IF->length() < 4 && !waiting->length()) {
+    if(IF->length() < W && waiting->length()) {
         // If not reach the end of the instructions queue and read port free
         if(waiting->length() > 0 && !readOccupied) {
             instructions INS = waiting->top();
             readOccupied = true;
             waiting->pop(waiting);
-            IF->push(INS);
+            
+            // If this is the first instruction of IF
+            if(IF->getType() == -1){
+                if(!INS.getDepends()) {
+                    string* tempS = INS.getDepends();
+                    string* s = new string[INS.getDependsLength()];
+                    for(int i=0; i<INS.getDependsLength(); i++) s[i] = tempS[i];
+                
+                    IF->setInstructions(INS.getPC(),    INS.getType(), s, INS.getDependsLength());
+                }
+                else
+                    IF->setInstructions(INS.getPC(),    INS.getType(), nullptr, INS.getDependsLength());
+            }
+            else
+                IF->push(INS);
         }
     }
-    
+    cout <<"B" <<endl;
     // Reach the pipeline width (or after push)
     // Then out queue
     // If ID not reach the pipline width
-    if(ID->length() < 4 && IF->length()) {
+    if(ID->length() < W && IF->length()) {
         instructions INS = IF->top();
         IF->pop(IF);
-        ID->push(INS);
+        
+        // If this is the first instruction of ID
+        if(ID->getType() == -1){
+            if(!INS.getDepends()) {
+                string* tempS = INS.getDepends();
+                string* s = new string[INS.getDependsLength()];
+                for(int i=0; i<INS.getDependsLength(); i++) s[i] = tempS[i];
+            
+                ID->setInstructions(INS.getPC(), INS.getType(), s, INS.getDependsLength());
+            }
+            else
+                ID->setInstructions(INS.getPC(), INS.getType(), nullptr, INS.getDependsLength());
+        }
+        else
+            ID->push(INS);
     }
 }
 
@@ -58,7 +87,20 @@ void pipeline::S_ID() {
     if(EX->length()) {
         instructions INS = ID->top();
         ID->pop(ID);
-        EX->push(INS);
+        // If this is the first instruction
+        if(EX->getType() == -1){
+            if(!EX->getDepends()) {
+                string* tempS = INS.getDepends();
+                string* s = new string[INS.getDependsLength()];
+                for(int i=0; i<INS.getDependsLength(); i++) s[i] = tempS[i];
+            
+                EX->setInstructions(INS.getPC(), INS.getType(), s, INS.getDependsLength());
+            }
+            else
+                EX->setInstructions(INS.getPC(), INS.getType(), nullptr, INS.getDependsLength());
+        }
+        else
+            EX->push(INS);
     }
 }
 
@@ -113,10 +155,23 @@ void pipeline::S_EX() {
     }
     
     // Out instruction
-    if(MEM->length() < 4 && isEXE && ifOut) {
+    if(MEM->length() < W && isEXE && ifOut) {
         isEXE = false;
         EX->pop(EX);
-        MEM->push(INS);
+        // If this is the first instruction
+        if(MEM->getType() == -1){
+            if(!MEM->getDepends()) {
+                string* tempS = INS.getDepends();
+                string* s = new string[INS.getDependsLength()];
+                for(int i=0; i<INS.getDependsLength(); i++) s[i] = tempS[i];
+            
+                MEM->setInstructions(INS.getPC(), INS.getType(), s, INS.getDependsLength());
+            }
+            else
+                MEM->setInstructions(INS.getPC(), INS.getType(), nullptr, INS.getDependsLength());
+        }
+        else
+            MEM->push(INS);
     }
 }
 
@@ -153,10 +208,23 @@ void pipeline::S_MEM() {
     }
     
     // Out instruction
-    if(WB->length() < 4 && ifOut) {
+    if(WB->length() < W && ifOut) {
         isMEM = false;
         MEM->pop(MEM);
-        WB->push(INS);
+        // If this is the first instruction
+        if(WB->getType() == -1){
+            if(!WB->getDepends()) {
+                string* tempS = INS.getDepends();
+                string* s = new string[INS.getDependsLength()];
+                for(int i=0; i<INS.getDependsLength(); i++) s[i] = tempS[i];
+            
+                WB->setInstructions(INS.getPC(), INS.getType(), s, INS.getDependsLength());
+            }
+            else
+                WB->setInstructions(INS.getPC(), INS.getType(), nullptr, INS.getDependsLength());
+        }
+        else
+            WB->push(INS);
     }
 }
 
@@ -184,6 +252,13 @@ void pipeline::S_WB() {
 // Public:
 // Default constructor
 pipeline::pipeline() {
+    waiting = new instructions();
+    IF = new instructions();
+    ID = new instructions();
+    EX = new instructions();
+    MEM = new instructions();
+    WB = new instructions();
+    
     this->initialize();
     
     waiting->reload();

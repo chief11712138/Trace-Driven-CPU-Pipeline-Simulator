@@ -68,9 +68,15 @@ void caculateIT() {
 }
 
 int main(int argc, char* argv[]) {
-    start_inst = stoi(argv[1]);
-    inst_count = stoi(argv[2]);
-    W = stoi(argv[3]);
+//    location = str(argv[1]);
+//    start_inst = stoi(argv[2]);
+//    inst_count = stoi(argv[3]);
+//    W = stoi(argv[4]);
+    
+    location = "/Users/shengyujia/学习/计算机/2022春季/CMPT 305/Assignment/Proj2 Group/Proj2-Group/compute_fp_1";
+    start_inst = 10000;
+    inst_count = 1000000;
+    W = 1;
     
     T = 0;
     for(int i=0; i<5; i++) IT[i] = 0;

@@ -17,17 +17,15 @@ private:
     string* depends; // A list of PC values for instructions that the current instruction depends on
     int dependsLength; // Depends array length
     instructions* next; // Next instructions
-    
-    instructions(); // Default constructor
 
     // Help functions
     void __reloadH(string s); // This is a help function of reload. It will put s into current instructions
     
 public:
+    instructions(); // Default constructor
     ~instructions(); // Deconstructor
-    
-    instructions(string s); // Constructor
-    instructions(string PC, int type, string depends[], int dependsLength); // Constructor
+
+    instructions(string PC, int type, string* depends, int dependsLength); // Constructor
     
     void pop(instructions* INS); // Pop instructions
     
@@ -47,6 +45,8 @@ public:
     int getType(); // Get the top instruction type
     
     string getPC(); // Get the top instruction PC
+    
+    void setInstructions(string PC, int type, string* s, int dependensLength); // Set the top instruction
 };
 
 #endif /* instructions_hpp */
