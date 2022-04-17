@@ -15,7 +15,6 @@ void pipeline::initialize() {
     branchExeOccupied = false;
     readOccupied = false;
     writeOccupied = false;
-    writeOccupied = false;
     fin.open(location);
     isEXE = false;
     isMEM = false;
@@ -284,6 +283,13 @@ bool pipeline::simulation() {
     this->S_EX();
     this->S_MEM();
     this->S_WB();
+    
+    intOccupied = false;
+    floatOccupied = false;
+    branchExeOccupied = false;
+    readOccupied = false;
+    writeOccupied = false;
+    writeOccupied = false;
     
     return true;
 }
