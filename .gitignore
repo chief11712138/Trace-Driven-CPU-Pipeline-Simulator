@@ -1,0 +1,10 @@
+/build*/
+/out/
+/.cache/
+/.idea/
+/.vscode/
+/.DS_Store
+*.user
+*.trace
+
+!/tests/sample.trace
